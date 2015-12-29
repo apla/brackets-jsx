@@ -1,0 +1,12 @@
+{
+    "name": "react-jsx",
+    "title": "React (.jsx) language mode for Brackets",
+    "description": "Added language mode for React (.jsx)",
+    "homepage": "https://github.com/apla/brackets-jsx",
+    "version": "1.0.0",
+    "author": "apla (http://apla.me)",
+    "license": "MIT",
+    "engines": {
+        "brackets": ">=1.5.0"
+    }
+}
