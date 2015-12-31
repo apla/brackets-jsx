@@ -1168,7 +1168,7 @@ define(function (require, exports, module) {
 			},
 
 			innerMode: function(state) {
-				return state.context[state.context.length - 1]
+				return {mode: state.context.mode};
 			}
 		}
 	}, "xml", "javascript")
