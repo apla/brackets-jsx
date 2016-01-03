@@ -10,3 +10,18 @@ A word to the [marijnh](https://github.com/marijnh):
 > and reviewing and pushing people in the right direction. You can find my version in b3f9487.
 > Please test it and submit failing test cases. If this helps you in a financial way,
 > a donation to cover the morning spent on this is much appreciated.
+
+How it works
+------------
+
+This module removes original `xml` and `javascript` modes from brackets and replaces it with latest version from CodeMirror. After, `jsx` file extension is disassociated from `javascript` mode and new `jsx` mode is created.
+
+How to update the extension
+---------------------------
+
+I've created [script](build.sh) which fetch `xml`, `javascript` and `jsx` modes from CodeMirror.
+Then script concatenate results, wraps result with `_header.js` and `_footer.js` and put result into brackets extension `main.js`.
+
+After everything is done, you'll need to change version in `package.json` and commit changes.
+
+`npm run-script package` will produce archive ready to upload.
