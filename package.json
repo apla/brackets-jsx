@@ -8,10 +8,10 @@
     "engines": {
         "brackets": ">=1.5.0"
     },
-	"scripts": {
-		"build": "bash ./build.sh",
-		"package": "git archive --format zip -o $npm_package_name-$npm_package_version.zip master",
-		"test": "set"
-	},
-    "version": "1.0.1"
+    "scripts": {
+        "build": "bash ./build.sh",
+        "package": "git archive --format zip -o $npm_package_name-$npm_package_version.zip master",
+        "test": "set"
+    },
+    "version": "1.0.2"
 }

@@ -911,6 +911,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
     }
     if (type == "variable") cx.marked = "property";
     if (type == "spread") return cont(pattern);
+    if (type == "}") return pass();
     return cont(expect(":"), pattern, maybeAssign);
   }
   function maybeAssign(_type, value) {
@@ -1145,9 +1146,24 @@ CodeMirror.registerHelper("wordChars", "javascript", /[\w$]/);
 
       if (stream.peek() == "{") {
         xmlMode.skipAttribute(cx.state)
-        state.context = new Context(CodeMirror.startState(jsMode, flatXMLIndent(cx.state)),
+
+        var indent = flatXMLIndent(cx.state), xmlContext = cx.state.context
+        // If JS starts on same line as tag
+        if (xmlContext && stream.match(/^[^>]*>\s*$/, false)) {
+          while (xmlContext.prev && !xmlContext.startOfLine)
+            xmlContext = xmlContext.prev
+          // If tag starts the line, use XML indentation level
+          if (xmlContext.startOfLine) indent -= config.indentUnit
+          // Else use JS indentation level
+          else if (cx.prev.state.lexical) indent = cx.prev.state.lexical.indented
+        // Else if inside of tag
+        } else if (cx.depth == 1) {
+          indent += config.indentUnit
+        }
+
+        state.context = new Context(CodeMirror.startState(jsMode, indent),
                                     jsMode, 0, state.context)
-        return token(stream, state)
+        return null
       }
 
       if (cx.depth == 1) { // Inside of tag
@@ -1155,7 +1171,7 @@ CodeMirror.registerHelper("wordChars", "javascript", /[\w$]/);
           xmlMode.skipAttribute(cx.state)
           state.context = new Context(CodeMirror.startState(xmlMode, flatXMLIndent(cx.state)),
                                       xmlMode, 0, state.context)
-          return token(stream, state)
+          return null
         } else if (stream.match("//")) {
           stream.skipToEnd()
           return "comment"
@@ -1184,7 +1200,7 @@ CodeMirror.registerHelper("wordChars", "javascript", /[\w$]/);
         jsMode.skipExpression(cx.state)
         state.context = new Context(CodeMirror.startState(xmlMode, jsMode.indent(cx.state, "")),
                                     xmlMode, 0, state.context)
-        return token(stream, state)
+        return null
       }
 
       var style = jsMode.token(stream, cx.state)
@@ -1221,15 +1237,19 @@ CodeMirror.registerHelper("wordChars", "javascript", /[\w$]/);
   }, "xml", "javascript")
 
 
-	CodeMirror.defineMIME("text/jsx", "jsx")
+	CodeMirror.defineMIME ("text/jsx", "jsx")
 
-	LanguageManager.getLanguage("javascript").removeFileExtension("jsx");
+	var jsLang = LanguageManager.getLanguage ("javascript");
+	jsLang.removeFileExtension("jsx");
 
 	LanguageManager.defineLanguage("jsx", {
-		name: "jsx",
+		name: "JSX",
 		mode: "jsx",
 		fileExtensions: ["jsx", "react.js"],
 		blockComment: ["/*", "*/"],
 		lineComment: ["//"]
 	});
+
+	jsLang._setLanguageForMode ("jsx", jsLang);
+
 });
